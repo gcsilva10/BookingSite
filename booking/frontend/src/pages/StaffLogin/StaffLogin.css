@@ -1,0 +1,14 @@
+.page-staff-login {
+  display: block;
+}
+.staff-form {
+  display: grid;
+  gap: 12px;
+  max-width: 320px;
+}
+.staff-form input {
+  width: 100%;
+  padding: 8px;
+}
+.error { color: #c00; }
+.success { color: #090; }
