@@ -1,0 +1,174 @@
+.page-staff-tables {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-staff-tables h1 {
+  margin-bottom: 24px;
+  color: #E8B701;
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.table-card {
+  background-color: #222;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.table-card h3 {
+  margin-top: 0;
+  color: #E8B701;
+}
+
+.table-card p {
+  margin: 8px 0;
+}
+
+.table-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.table-actions button {
+  background: transparent;
+  border: 1px solid #E8B701;
+  color: #E8B701;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.table-actions button.toggle.active {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.table-actions button.toggle.inactive {
+  border-color: #FFA500;
+  color: #FFA500;
+}
+
+.table-actions button.delete {
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+}
+
+.table-actions button:hover {
+  background: #E8B701;
+  color: #000;
+}
+
+.table-actions button.toggle.active:hover {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.table-actions button.toggle.inactive:hover {
+  background: #FFA500;
+  color: #000;
+}
+
+.table-actions button.delete:hover {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+.add-table-form {
+  background-color: #111;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 32px;
+}
+
+.add-table-form h2 {
+  margin-top: 0;
+  color: #E8B701;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  color: #ccc;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #222;
+  color: #fff;
+}
+
+.form-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+}
+
+.form-actions button.create {
+  background-color: #E8B701;
+  color: #000;
+}
+
+.form-actions button.cancel {
+  background-color: #333;
+  color: #ccc;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  border: 2px dashed #333;
+  border-radius: 8px;
+}
+
+.empty-state p {
+  margin-bottom: 16px;
+  color: #888;
+}
+
+.empty-state button {
+  background-color: #E8B701;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './StaffLogin.css';
 import { API_BASE_URL } from '../../config';
+import { useNavigate } from 'react-router-dom';
 
 export default function StaffLogin() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,8 @@ export default function StaffLogin() {
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
       setSuccess('Login efetuado.');
+      try { window.dispatchEvent(new Event('auth:changed')); } catch {}
+      navigate('/');
     } catch (err: any) {
       setError(err.message || 'Erro de autenticação');
     } finally {

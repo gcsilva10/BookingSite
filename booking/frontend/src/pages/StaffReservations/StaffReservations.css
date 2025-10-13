@@ -1,0 +1,172 @@
+.page-staff-reservations {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-staff-reservations h1 {
+  margin-bottom: 24px;
+  color: #E8B701;
+}
+
+.calendar-container {
+  background-color: #222;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* FullCalendar customizations */
+.fc {
+  --fc-border-color: #444;
+  --fc-button-bg-color: #E8B701;
+  --fc-button-border-color: #E8B701;
+  --fc-button-hover-bg-color: #d9a800;
+  --fc-button-hover-border-color: #d9a800;
+  --fc-button-active-bg-color: #c29700;
+  --fc-button-active-border-color: #c29700;
+  --fc-event-bg-color: #E8B701;
+  --fc-event-border-color: #E8B701;
+  --fc-event-text-color: #000;
+  --fc-page-bg-color: #222;
+  --fc-neutral-bg-color: #333;
+  --fc-neutral-text-color: #fff;
+  --fc-today-bg-color: rgba(232, 183, 1, 0.1);
+}
+
+.fc-theme-standard th {
+  background-color: #333;
+  color: #fff;
+}
+
+.fc-day-today {
+  background-color: rgba(232, 183, 1, 0.1) !important;
+}
+
+.fc-event {
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.9em;
+}
+
+.fc-event:hover {
+  opacity: 0.9;
+}
+
+.reservation-detail {
+  background-color: #222;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+  border: 1px solid #444;
+}
+
+.reservation-detail h3 {
+  margin-top: 0;
+  color: #E8B701;
+}
+
+.reservation-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.reservation-field {
+  margin-bottom: 12px;
+}
+
+.reservation-field-label {
+  font-weight: 600;
+  color: #ccc;
+  margin-bottom: 4px;
+}
+
+.reservation-tables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.reservation-table-item {
+  background-color: #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.reservation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.reservation-actions button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.close-btn {
+  background-color: #444;
+  color: #ccc;
+}
+
+.filters-section {
+  background-color: #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.filter-item label {
+  display: block;
+  font-weight: 600;
+  color: #ccc;
+  margin-bottom: 6px;
+}
+
+.filter-item select {
+  width: 100%;
+  padding: 8px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+/* Status indicators */
+.status-pending {
+  color: #FFC107;
+}
+
+.status-confirmed {
+  color: #4CAF50;
+}
+
+.status-cancelled {
+  color: #f44336;
+}
