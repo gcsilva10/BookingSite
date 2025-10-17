@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiGet, apiPost, apiPut, apiDelete } from '../../lib/api';
+import { Button } from '../../components/Buttons';
+import { GeometricShapes } from '../../components/GeometricShapes';
+import '../../components/Buttons/Button.css';
 import './StaffTables.css';
 
+// Types
 interface Table {
   id: number;
   number: number;
@@ -10,30 +14,31 @@ interface Table {
   is_active: boolean;
 }
 
+interface AuthMe {
+  is_staff: boolean;
+  is_superuser: boolean;
+}
+
 export default function StaffTables() {
+  // Hooks
   const navigate = useNavigate();
+  
+  // State
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  
-  // Form state
   const [tableNumber, setTableNumber] = useState('');
   const [seats, setSeats] = useState('2');
   const [isActive, setIsActive] = useState(true);
 
+  // Effects
   // Auth check
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) {
       navigate('/staff');
       return;
-    }
-    
-    // Verify if user is staff or superuser
-    interface AuthMe {
-      is_staff: boolean;
-      is_superuser: boolean;
     }
     
     apiGet<AuthMe>('/auth/me/')
@@ -52,6 +57,7 @@ export default function StaffTables() {
     loadTables();
   }, []);
 
+  // Functions
   const loadTables = async () => {
     try {
       setLoading(true);
@@ -66,6 +72,14 @@ export default function StaffTables() {
     }
   };
 
+  const resetForm = () => {
+    setTableNumber('');
+    setSeats('2');
+    setIsActive(true);
+    setShowAddForm(false);
+  };
+
+  // Handlers
   const handleAddTable = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -95,16 +109,13 @@ export default function StaffTables() {
     }
   };
   
-  // Function to toggle table status
   const handleToggleStatus = async (table: Table) => {
     try {
-      // Update the table with opposite status
       const updatedTable = await apiPut<Table>(`/tables/${table.id}/`, {
         ...table,
         is_active: !table.is_active
       });
       
-      // Update the table in the state
       setTables(tables.map(t => t.id === table.id ? updatedTable : t));
     } catch (err) {
       setError('Failed to update table status. Please try again.');
@@ -112,116 +123,133 @@ export default function StaffTables() {
     }
   };
 
-  const resetForm = () => {
-    setTableNumber('');
-    setSeats('2');
-    setIsActive(true);
-    setShowAddForm(false);
-  };
-
+  // Render
   return (
     <div className="page-staff-tables">
-      <h1>Tables Management</h1>
+      <GeometricShapes />
       
-      {error && <div className="error-message">{error}</div>}
-      
-      {!showAddForm ? (
-        <button 
-          className="form-actions button create" 
-          onClick={() => setShowAddForm(true)}
-          style={{ marginBottom: '20px' }}
-        >
-          Add New Table
-        </button>
-      ) : (
-        <div className="add-table-form">
-          <h2>Add New Table</h2>
-          <form onSubmit={handleAddTable}>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Table Number</label>
-                <input 
-                  type="number" 
-                  value={tableNumber} 
-                  onChange={(e) => setTableNumber(e.target.value)}
-                  required
-                  min="1"
-                />
+      <div className="staff-tables-container">
+        <div className="page-header">
+          <h1>Gestão de Mesas</h1>
+          <p>Crie, visualize e gerencie as mesas do restaurante</p>
+        </div>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        {/* Add Table Button / Form */}
+        {!showAddForm ? (
+          <div className="add-table-button">
+            <Button 
+              variant="primary"
+              onClick={() => setShowAddForm(true)}
+            >
+              ➕ Adicionar Nova Mesa
+            </Button>
+          </div>
+        ) : (
+          <div className="add-table-form">
+            <h2>Adicionar Nova Mesa</h2>
+            <form onSubmit={handleAddTable}>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Número da Mesa</label>
+                  <input 
+                    type="number" 
+                    value={tableNumber} 
+                    onChange={(e) => setTableNumber(e.target.value)}
+                    placeholder="Ex: 1, 2, 3..."
+                    required
+                    min="1"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Capacidade (Pessoas)</label>
+                  <input 
+                    type="number" 
+                    value={seats} 
+                    onChange={(e) => setSeats(e.target.value)}
+                    placeholder="Ex: 2, 4, 6..."
+                    required
+                    min="1"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Status Inicial</label>
+                  <select 
+                    value={isActive ? 'active' : 'inactive'} 
+                    onChange={(e) => setIsActive(e.target.value === 'active')}
+                  >
+                    <option value="active">Ativa</option>
+                    <option value="inactive">Inativa</option>
+                  </select>
+                </div>
               </div>
               
-              <div className="form-group">
-                <label>Seats</label>
-                <input 
-                  type="number" 
-                  value={seats} 
-                  onChange={(e) => setSeats(e.target.value)}
-                  required
-                  min="1"
-                />
+              <div className="form-actions">
+                <Button type="button" variant="cancel" onClick={resetForm}>
+                  Cancelar
+                </Button>
+                <Button type="submit" variant="primary">
+                  Criar Mesa
+                </Button>
               </div>
-              
-              <div className="form-group">
-                <label>Status</label>
-                <select 
-                  value={isActive ? 'active' : 'inactive'} 
-                  onChange={(e) => setIsActive(e.target.value === 'active')}
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+            </form>
+          </div>
+        )}
+        
+        {/* Tables Grid */}
+        {loading ? (
+          <p className="loading-spinner">A carregar mesas...</p>
+        ) : (
+          <div className="tables-grid">
+            {tables.map((table) => (
+              <div key={table.id} className="table-card">
+                <div className="table-card-header">
+                  <div className="table-number">Mesa {table.number}</div>
+                  <div className="table-icon">🪑</div>
+                </div>
+                
+                <div className="table-info">
+                  <div className="info-row">
+                    <span className="info-label">Capacidade</span>
+                    <span className="info-value">{table.seats} pessoas</span>
+                  </div>
+                  
+                  <div className="info-row">
+                    <span className="info-label">Status</span>
+                    <span className={`table-status ${table.is_active ? 'available' : 'occupied'}`}>
+                      {table.is_active ? 'Ativa' : 'Inativa'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="table-actions">
+                  <Button 
+                    variant={table.is_active ? "secondary" : "success"}
+                    onClick={() => handleToggleStatus(table)}
+                  >
+                    {table.is_active ? '🔒 Desativar' : '✅ Ativar'}
+                  </Button>
+                  <Button 
+                    variant="danger"
+                    onClick={() => handleDeleteTable(table.id)}
+                  >
+                    🗑️ Eliminar
+                  </Button>
+                </div>
               </div>
-            </div>
+            ))}
             
-            <div className="form-actions">
-              <button type="button" className="cancel" onClick={resetForm}>
-                Cancel
-              </button>
-              <button type="submit" className="create">
-                Create Table
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-      
-      {loading ? (
-        <p>Loading tables...</p>
-      ) : tables.length === 0 ? (
-        <div className="empty-state">
-          <p>No tables found. Create your first table to get started.</p>
-          {!showAddForm && (
-            <button onClick={() => setShowAddForm(true)}>
-              Create Table
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="tables-grid">
-          {tables.map(table => (
-            <div key={table.id} className="table-card">
-              <h3>Table #{table.number}</h3>
-              <p><strong>Seats:</strong> {table.seats} people</p>
-              <p>
-                <strong>Status:</strong> 
-                <span style={{ color: table.is_active ? '#4CAF50' : '#F44336' }}>
-                  {table.is_active ? 'Active' : 'Inactive'}
-                </span>
+            {tables.length === 0 && !loading && (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--color-gray-400)', padding: '3rem' }}>
+                Nenhuma mesa encontrada. Adicione a primeira mesa para começar.
               </p>
-              <div className="table-actions">
-                <button 
-                  className={table.is_active ? "toggle active" : "toggle inactive"} 
-                  onClick={() => handleToggleStatus(table)}
-                >
-                  {table.is_active ? 'Set Inactive' : 'Set Active'}
-                </button>
-                <button className="delete" onClick={() => handleDeleteTable(table.id)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

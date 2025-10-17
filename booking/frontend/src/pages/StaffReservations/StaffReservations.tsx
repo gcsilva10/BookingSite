@@ -4,10 +4,13 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { apiGet } from '../../lib/api';
+import { apiGet, apiPatch, apiDelete } from '../../lib/api';
+import { Button } from '../../components/Buttons';
+import { GeometricShapes } from '../../components/GeometricShapes';
+import '../../components/Buttons/Button.css';
 import './StaffReservations.css';
 
-// Define interfaces for our data
+// Types
 interface Table {
   id: number;
   number: number;
@@ -26,7 +29,16 @@ interface Reservation {
   tables: Table[];
 }
 
-// Format date for display
+interface AuthMe {
+  id: number;
+  username: string;
+  email: string;
+  is_superuser: boolean;
+  is_staff: boolean;
+  is_active: boolean;
+}
+
+// Utility functions
 const formatDateTime = (dateStr: string) => {
   const date = new Date(dateStr);
   return date.toLocaleString('pt-PT', {
@@ -39,38 +51,31 @@ const formatDateTime = (dateStr: string) => {
 };
 
 const StaffReservations: React.FC = () => {
+  // Hooks
   const navigate = useNavigate();
+  
+  // State
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Filter states
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+  // Effects
   // Auth check
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      navigate('/staff');
-      return;
+    if (token) {
+      apiGet<AuthMe>('/auth/me/')
+        .then((data) => {
+          if (!data.is_staff && !data.is_superuser) {
+            navigate('/');
+          }
+        })
+        .catch(() => {
+          navigate('/staff');
+        });
     }
-    
-    // Verify if user is staff or superuser
-    interface AuthMe {
-      is_staff: boolean;
-      is_superuser: boolean;
-    }
-    
-    apiGet<AuthMe>('/auth/me/')
-      .then((data) => {
-        if (!data.is_staff && !data.is_superuser) {
-          navigate('/');
-        }
-      })
-      .catch(() => {
-        navigate('/staff');
-      });
   }, [navigate]);
 
   // Fetch reservations
@@ -92,7 +97,7 @@ const StaffReservations: React.FC = () => {
     fetchReservations();
   }, [fetchReservations]);
 
-  // Handle event click on calendar
+  // Handlers
   const handleEventClick = (info: any) => {
     const reservationId = parseInt(info.event.id);
     const reservation = reservations.find(r => r.id === reservationId);
@@ -102,37 +107,21 @@ const StaffReservations: React.FC = () => {
     }
   };
 
-  // Update reservation status
   const updateReservationStatus = async (id: number, newStatus: 'PENDING' | 'CONFIRMED' | 'CANCELLED') => {
     try {
-      // Find the reservation we're updating
       const reservationToUpdate = reservations.find(res => res.id === id);
       if (!reservationToUpdate) {
         throw new Error('Reservation not found');
       }
 
-      // Create a direct status update without using the serializer
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1/reservations/${id}/`, {
-        method: 'PATCH',  // Use PATCH for partial updates
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update status: ${response.status}`);
-      }
+      await apiPatch(`/reservations/${id}/`, { status: newStatus });
       
-      // Update the reservation in our state
       setReservations(prevReservations => 
         prevReservations.map(res => 
           res.id === id ? { ...res, status: newStatus } : res
         )
       );
       
-      // Also update the selected reservation if it's the one we just updated
       if (selectedReservation?.id === id) {
         setSelectedReservation({ ...selectedReservation, status: newStatus });
       }
@@ -144,22 +133,40 @@ const StaffReservations: React.FC = () => {
     }
   };
 
-  // Close reservation detail panel
+  const deleteReservation = async (id: number) => {
+    if (!confirm("Tem certeza que deseja apagar esta reserva? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+    
+    try {
+      await apiDelete(`/reservations/${id}/`);
+      
+      setReservations(prevReservations => 
+        prevReservations.filter(res => res.id !== id)
+      );
+      
+      setSelectedReservation(null);
+      setError(null);
+    } catch (err) {
+      setError('Failed to delete reservation. Please try again.');
+      console.error('Error deleting reservation:', err);
+    }
+  };
+
   const closeReservationDetail = () => {
     setSelectedReservation(null);
   };
 
-  // Filter reservations based on status
+  // Computed values
   const filteredReservations = statusFilter === 'all' 
     ? reservations 
     : reservations.filter(r => r.status === statusFilter);
 
-  // Map reservations to FullCalendar events
   const events = filteredReservations.map(reservation => ({
     id: String(reservation.id),
     title: `${reservation.customer_name} - ${reservation.guests} pessoas`,
     start: reservation.start_datetime,
-    end: new Date(new Date(reservation.start_datetime).getTime() + 2 * 60 * 60 * 1000).toISOString(), // Default 2-hour reservation
+    end: new Date(new Date(reservation.start_datetime).getTime() + 2 * 60 * 60 * 1000).toISOString(),
     backgroundColor: reservation.status === 'CONFIRMED' 
       ? '#4CAF50' 
       : reservation.status === 'CANCELLED' 
@@ -176,9 +183,13 @@ const StaffReservations: React.FC = () => {
     }
   }));
 
+  // Render
+
   return (
     <div className="page-staff-reservations">
-      <h1>Reservations Calendar</h1>
+      <GeometricShapes />
+      
+      <h1>Gestão de Reservas</h1>
       
       {/* Filters */}
       <div className="filters-section">
@@ -189,10 +200,10 @@ const StaffReservations: React.FC = () => {
               value={statusFilter} 
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="all">All</option>
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="all">Todos</option>
+              <option value="PENDING">Pendentes</option>
+              <option value="CONFIRMED">Confirmadas</option>
+              <option value="CANCELLED">Canceladas</option>
             </select>
           </div>
         </div>
@@ -203,7 +214,7 @@ const StaffReservations: React.FC = () => {
       {/* Calendar */}
       <div className="calendar-container">
         {loading ? (
-          <p>Loading reservations...</p>
+          <p>A carregar reservas...</p>
         ) : (
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -213,6 +224,13 @@ const StaffReservations: React.FC = () => {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay'
             }}
+            buttonText={{
+              today: 'Hoje',
+              month: 'Mês',
+              week: 'Semana',
+              day: 'Dia'
+            }}
+            locale="pt"
             events={events}
             eventClick={handleEventClick}
             height="auto"
@@ -227,44 +245,44 @@ const StaffReservations: React.FC = () => {
       {/* Reservation Detail */}
       {selectedReservation && (
         <div className="reservation-detail">
-          <h3>Reservation Details</h3>
+          <h3>Detalhes da Reserva</h3>
           
           <div className="reservation-detail-grid">
             <div className="reservation-field">
               <div className="reservation-field-label">Status</div>
               <div className={`status-${selectedReservation.status.toLowerCase()}`}>
-                {selectedReservation.status === 'PENDING' && 'Pending'}
-                {selectedReservation.status === 'CONFIRMED' && 'Confirmed'}
-                {selectedReservation.status === 'CANCELLED' && 'Cancelled'}
+                {selectedReservation.status === 'PENDING' && 'Pendente'}
+                {selectedReservation.status === 'CONFIRMED' && 'Confirmada'}
+                {selectedReservation.status === 'CANCELLED' && 'Cancelada'}
               </div>
             </div>
             
             <div className="reservation-field">
-              <div className="reservation-field-label">Name</div>
+              <div className="reservation-field-label">Nome</div>
               <div>{selectedReservation.customer_name}</div>
             </div>
             
             <div className="reservation-field">
-              <div className="reservation-field-label">Phone</div>
+              <div className="reservation-field-label">Telefone</div>
               <div>{selectedReservation.customer_phone}</div>
             </div>
             
             <div className="reservation-field">
-              <div className="reservation-field-label">Date & Time</div>
+              <div className="reservation-field-label">Data & Hora</div>
               <div>{formatDateTime(selectedReservation.start_datetime)}</div>
             </div>
             
             <div className="reservation-field">
-              <div className="reservation-field-label">Number of Guests</div>
+              <div className="reservation-field-label">Número de Convidados</div>
               <div>{selectedReservation.guests} pessoas</div>
             </div>
             
             <div className="reservation-field">
-              <div className="reservation-field-label">Tables</div>
+              <div className="reservation-field-label">Mesas</div>
               <div className="reservation-tables">
                 {selectedReservation.tables.map(table => (
                   <div key={table.id} className="reservation-table-item">
-                    Mesa #{table.number} ({table.seats} seats)
+                    Mesa #{table.number} ({table.seats} lugares)
                   </div>
                 ))}
               </div>
@@ -272,38 +290,56 @@ const StaffReservations: React.FC = () => {
           </div>
           
           <div className="reservation-field">
-            <div className="reservation-field-label">Notes</div>
-            <div>{selectedReservation.notes || 'No notes'}</div>
+            <div className="reservation-field-label">Observações</div>
+            <div>{selectedReservation.notes || 'Sem observações'}</div>
           </div>
           
           <div className="reservation-actions">
-            {selectedReservation.status === 'PENDING' && (
-              <>
-                <button 
-                  className="confirm-btn"
-                  onClick={() => updateReservationStatus(selectedReservation.id, 'CONFIRMED')}
-                >
-                  Confirm Reservation
-                </button>
-                <button 
-                  className="cancel-btn"
-                  onClick={() => updateReservationStatus(selectedReservation.id, 'CANCELLED')}
-                >
-                  Cancel Reservation
-                </button>
-              </>
+            {/* Mostrar botão de Confirmar se não estiver confirmada */}
+            {selectedReservation.status !== 'CONFIRMED' && (
+              <Button 
+                variant="success"
+                className="confirm-btn"
+                onClick={() => updateReservationStatus(selectedReservation.id, 'CONFIRMED')}
+              >
+                ✓ Confirmar Reserva
+              </Button>
             )}
-            {selectedReservation.status === 'CONFIRMED' && (
-              <button 
+            
+            {/* Mostrar botão de Pendente se não estiver pendente */}
+            {selectedReservation.status !== 'PENDING' && (
+              <Button 
+                variant="primary"
+                className="pending-btn"
+                onClick={() => updateReservationStatus(selectedReservation.id, 'PENDING')}
+              >
+                ⏳ Marcar como Pendente
+              </Button>
+            )}
+            
+            {/* Mostrar botão de Cancelar se não estiver cancelada */}
+            {selectedReservation.status !== 'CANCELLED' && (
+              <Button 
+                variant="secondary"
                 className="cancel-btn"
                 onClick={() => updateReservationStatus(selectedReservation.id, 'CANCELLED')}
               >
-                Cancel Reservation
-              </button>
+                ✕ Cancelar Reserva
+              </Button>
             )}
-            <button className="close-btn" onClick={closeReservationDetail}>
-              Close
-            </button>
+            
+            {/* Botão para apagar a reserva */}
+            <Button 
+              variant="danger"
+              className="delete-btn"
+              onClick={() => deleteReservation(selectedReservation.id)}
+            >
+              🗑️ Eliminar Reserva
+            </Button>
+            
+            <Button variant="cancel" className="close-btn" onClick={closeReservationDetail}>
+              Fechar
+            </Button>
           </div>
         </div>
       )}

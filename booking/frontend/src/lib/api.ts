@@ -59,6 +59,17 @@ export async function apiPut<T>(path: string, body: unknown, init?: RequestInit)
   return res.json() as Promise<T>;
 }
 
+export async function apiPatch<T>(path: string, body: unknown, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    ...withAuth(init),
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+  handleUnauthorized(res.status);
+  if (!res.ok) throw new Error(`PATCH ${path} failed: ${res.status}`);
+  return res.json() as Promise<T>;
+}
+
 export async function apiDelete(path: string, init?: RequestInit): Promise<void> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...withAuth(init),

@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import './StaffLogin.css';
 import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/Buttons';
+import { GeometricShapes } from '../../components/GeometricShapes';
+import '../../components/Buttons/Button.css';
 
 export default function StaffLogin() {
+  // Hooks
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -11,6 +15,7 @@ export default function StaffLogin() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Handlers
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -36,22 +41,48 @@ export default function StaffLogin() {
     }
   }
 
+  // Render
   return (
     <div className="page-staff-login">
-      <h2>Staff Login</h2>
-      <form onSubmit={handleSubmit} className="staff-form">
-        <label>
-          Username
-          <input value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <button type="submit" disabled={loading}>{loading ? 'A entrar...' : 'Entrar'}</button>
-      </form>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
+      <GeometricShapes />
+      
+      <div className="login-card">
+        <div className="login-logo">
+          <h1>Couraça</h1>
+          <p>Restaurant & Bar</p>
+        </div>
+        
+        <h2 className="login-title">Acesso Staff</h2>
+        
+        <form onSubmit={handleSubmit} className="staff-form">
+          <div className="form-group">
+            <label>Username</label>
+            <input 
+              type="text"
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+              placeholder="O teu username"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Password</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              placeholder="A tua password"
+            />
+          </div>
+          
+          <Button variant="primary" type="submit" disabled={loading} className="login-button">
+            {loading ? 'A entrar...' : 'Entrar'}
+          </Button>
+        </form>
+        
+        {error && <p className="msg error">{error}</p>}
+        {success && <p className="msg success">{success}</p>}
+      </div>
     </div>
   );
 }
