@@ -6,7 +6,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { apiGet, apiPatch, apiDelete } from '../../lib/api';
 import { Button } from '../../components/Buttons';
-import { GeometricShapes } from '../../components/GeometricShapes';
 import '../../components/Buttons/Button.css';
 import './StaffReservations.css';
 
@@ -187,8 +186,6 @@ const StaffReservations: React.FC = () => {
 
   return (
     <div className="page-staff-reservations">
-      <GeometricShapes />
-      
       <h1>Gestão de Reservas</h1>
       
       {/* Filters */}

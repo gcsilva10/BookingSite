@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { apiGet, apiPost, apiDelete } from '../../lib/api';
 import { Button } from '../../components/Buttons';
-import { GeometricShapes } from '../../components/GeometricShapes';
 import '../../components/Buttons/Button.css';
 import './StaffUsers.css';
 
@@ -82,8 +81,6 @@ export default function StaffUsers() {
   // Render
   return (
     <div className="page-staff-users">
-      <GeometricShapes />
-      
       <div className="staff-users-container">
         <div className="page-header">
           <h1>Gestão de Utilizadores</h1>

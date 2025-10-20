@@ -6,7 +6,6 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import { Button } from '../../components/Buttons';
-import { GeometricShapes } from '../../components/GeometricShapes';
 import '../../components/Buttons/Button.css';
 
 export default function Home() {
@@ -171,7 +170,6 @@ export default function Home() {
   if (isStaff) {
     return (
       <div className="page-home">
-        <GeometricShapes />
         <div className="dashboard-section">
           <div className="dashboard-header">
             <h2>Dashboard</h2>
@@ -317,19 +315,6 @@ export default function Home() {
   // Render customer reservation form
   return (
     <div className="page-home">
-      <GeometricShapes />
-      
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Bem-vindo ao <span className="highlight">Couraça</span>
-          </h1>
-          <p className="hero-subtitle">
-            Num lugar com tantas histórias, criamos novas memórias
-          </p>
-        </div>
-      </section>
-
       <section className="reservation-section">
         <div className="reservation-container">
           <div className="reservation-header">
@@ -343,6 +328,7 @@ export default function Home() {
                 <label>Nome Completo</label>
                 <input 
                   type="text"
+                  className="input-name"
                   value={fullName} 
                   onChange={(e) => setFullName(e.target.value)} 
                   placeholder="O teu nome"
@@ -353,6 +339,7 @@ export default function Home() {
                 <label>Telefone</label>
                 <input 
                   type="tel"
+                  className="input-phone"
                   value={phone} 
                   onChange={(e) => setPhone(e.target.value)} 
                   placeholder="(+351) 9xx xxx xxx"
@@ -362,7 +349,8 @@ export default function Home() {
               <div className="form-group">
                 <label>Data</label>
                 <input 
-                  type="date" 
+                  type="date"
+                  className="input-date"
                   value={date} 
                   onChange={(e) => setDate(e.target.value)} 
                 />
@@ -371,7 +359,8 @@ export default function Home() {
               <div className="form-group">
                 <label>Hora</label>
                 <input 
-                  type="time" 
+                  type="time"
+                  className="input-time"
                   value={time} 
                   onChange={(e) => setTime(e.target.value)} 
                 />
@@ -380,7 +369,8 @@ export default function Home() {
               <div className="form-group">
                 <label>Número de Pessoas</label>
                 <input 
-                  type="number" 
+                  type="number"
+                  className="input-guests"
                   min={1} 
                   value={guests} 
                   onChange={(e) => setGuests(Number(e.target.value) || 1)} 
@@ -390,7 +380,7 @@ export default function Home() {
           
           <div className="table-selection">
             <h4>Mesas disponíveis:</h4>
-            <div className="tables-grid">
+            <div className="tables-choice-grid">
               {!date || !time ? (
                 <p>Selecione data e hora para ver as mesas disponíveis.</p>
               ) : loadingTables ? (
@@ -415,15 +405,17 @@ export default function Home() {
           <div className="form-group">
             <label>Observações (opcional)</label>
             <textarea 
+              className="input-notes"
               value={notes} 
               onChange={(e) => setNotes(e.target.value)} 
               placeholder="Preferências, alergias, ocasiões especiais..." 
             />
           </div>
-
-          <Button variant="primary" type="submit" disabled={submitting}>
-            {submitting ? 'A enviar...' : 'Confirmar Reserva'}
-          </Button>
+          <div className="submit-button-container">
+            <Button variant="primary" type="submit" disabled={submitting}>
+              {submitting ? 'A enviar...' : 'Confirmar Reserva'}
+            </Button>
+          </div>
 
           {error && <p className="msg error">{error}</p>}
           {success && <p className="msg success">{success}</p>}

@@ -2,13 +2,15 @@
 
 Um sistema completo de gestão de reservas para restaurantes, desenvolvido com Django REST Framework (backend) e React + TypeScript (frontend).
 
+![Restaurant Booking System](https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80)
+
 ## 📋 Índice
 
 - [Características](#características)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Requisitos](#requisitos)
-- [Instalação e Setup](#instalação-e-setup)
+- [2Instalação e Setup](#instalação-e-setup)
 - [Como Funciona](#como-funciona)
 - [API Endpoints](#api-endpoints)
 - [Screenshots](#screenshots)
@@ -35,10 +37,11 @@ Um sistema completo de gestão de reservas para restaurantes, desenvolvido com D
 
 ### Design
 
-- Interface moderna
-- Tema escuro com detalhes dourados
-- Animações suaves e transições fluidas
-- Background consistente em todas as páginas
+- 🎨 Interface moderna com glassmorphism e gradientes
+- 🌙 Tema escuro elegante com detalhes dourados
+- 📱 Totalmente responsivo (desktop, tablet, mobile)
+- ✨ Animações suaves e transições fluidas
+- 🖼️ Background consistente em todas as páginas
 
 ---
 
@@ -133,7 +136,7 @@ booking/
 ### 1️⃣ Clone o Repositório
 
 ```bash
-git clone https://github.com/gcsilva10/BookingSite.git
+git clone <repository-url>
 cd booking
 ```
 
@@ -144,22 +147,42 @@ cd booking
 #### 2.1 Navegue para a pasta backend
 
 ```bash
-cd booking/backend
+cd backend
 ```
 
-#### 2.2 Instale as dependências
+#### 2.2 Crie um ambiente virtual Python
+
+```bash
+python -m venv venv
+```
+
+#### 2.3 Ative o ambiente virtual
+
+**macOS/Linux:**
+
+```bash
+source venv/bin/activate
+```
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+#### 2.4 Instale as dependências
 
 ```bash
 pip install django djangorestframework django-cors-headers
 ```
 
-#### 2.3 Execute as migrações
+#### 2.5 Execute as migrações
 
 ```bash
 python manage.py migrate
 ```
 
-#### 2.4 Crie um superuser (admin)
+#### 2.6 Crie um superuser (admin)
 
 ```bash
 python manage.py createsuperuser
@@ -167,7 +190,7 @@ python manage.py createsuperuser
 
 > Siga as instruções para criar username e password
 
-#### 2.5 Inicie o servidor backend
+#### 2.7 Inicie o servidor backend
 
 ```bash
 python manage.py runserver
@@ -240,7 +263,7 @@ A homepage adapta-se automaticamente ao tipo de utilizador:
 
 #### Login (`/staff`)
 
-- Página de login moderna
+- Página de login moderna com card glassmorphism
 - Autenticação via JWT tokens
 - Validação de credenciais staff/superuser
 
@@ -322,6 +345,7 @@ A homepage adapta-se automaticamente ao tipo de utilizador:
 - **Formulário de Criação**:
   - Username (único)
   - Password
+  - Email (opcional)
   - Checkbox "Acesso Superuser" (centralizada)
 
 #### Listar Utilizadores
@@ -387,6 +411,52 @@ DELETE /admin/users/{id}/    # Eliminar user
 
 ---
 
+## 🎨 Design System
+
+### Cores
+
+- **Primary**: `#E8B701` (Dourado)
+- **Dark**: `#1a1a1a` (Background)
+- **Secondary Dark**: `#2a2a2a`
+- **Gray Scale**: 100-900
+
+### Tipografia
+
+- **Display**: Playfair Display (700-900) - Títulos
+- **Body**: Poppins (300-800) - Texto geral
+
+### Efeitos
+
+- **Glassmorphism**: `backdrop-filter: blur(30px)`
+- **Gradientes**: Dark gradients com overlay
+- **Sombras**: `0 8px 32px rgba(0,0,0,0.3)`
+- **Hover**: `transform: translateY(-4px)` + shadow boost
+
+### Componentes
+
+- **Cards**: Border radius 20px, gradient backgrounds
+- **Botões**: 5 variantes (primary, secondary, success, danger, cancel)
+- **Inputs**: Dark theme, yellow focus borders
+- **Badges**: Status coloridos com borders
+
+---
+
+## 📱 Responsividade
+
+### Breakpoints
+
+- **Desktop**: > 1400px (layout completo)
+- **Tablet**: 768px - 1400px (layout ajustado)
+- **Mobile**: < 768px (layout vertical)
+
+### Ajustes por Dispositivo
+
+- **Desktop**: Grid 3 colunas, tabelas completas
+- **Tablet**: Grid 2 colunas, navegação adaptada
+- **Mobile**: 1 coluna, menu hamburger, formulários verticais
+
+---
+
 ## 🔒 Segurança
 
 - **Autenticação JWT**: Tokens seguros com expiração
@@ -396,4 +466,87 @@ DELETE /admin/users/{id}/    # Eliminar user
 - **SQL Injection**: Protegido pelo Django ORM
 - **XSS**: React escapa automaticamente o output
 
-**Author: Gonçalo Silva**
+---
+
+## 🐛 Troubleshooting
+
+### Backend não inicia
+
+```bash
+# Verificar se o ambiente virtual está ativo
+which python  # deve mostrar path do venv
+
+# Reinstalar dependências
+pip install -r requirements.txt  # se existir
+```
+
+### Frontend não carrega
+
+```bash
+# Limpar cache e reinstalar
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Erro de CORS
+
+- Verificar se backend está em `localhost:8000`
+- Verificar `CORS_ALLOWED_ORIGINS` em `settings.py`
+
+### Tabelas não aparecem
+
+```bash
+# Criar algumas mesas de teste
+python manage.py shell
+>>> from tables.models import Table
+>>> Table.objects.create(number=1, seats=2, is_active=True)
+>>> Table.objects.create(number=2, seats=4, is_active=True)
+```
+
+---
+
+## 📝 Notas de Desenvolvimento
+
+### Próximas Features
+
+- [ ] Notificações por email
+- [ ] Sistema de avaliações
+- [ ] Integração com pagamentos
+- [ ] Multi-restaurante
+- [ ] App mobile nativa
+- [ ] Dashboard analytics avançado
+
+### Melhorias Futuras
+
+- [ ] Testes unitários (Jest + Pytest)
+- [ ] CI/CD pipeline
+- [ ] Docker containerization
+- [ ] PostgreSQL em produção
+- [ ] Redis para cache
+- [ ] WebSockets para updates real-time
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido com ❤️ por gcsilva
+
+---
+
+## 📄 Licença
+
+Este projeto é privado e não possui licença pública.
+
+---
+
+## 🙏 Agradecimentos
+
+- **Unsplash**: Imagens de background
+- **Google Fonts**: Poppins e Playfair Display
+- **Recharts**: Biblioteca de gráficos
+- **FullCalendar**: Componente de calendário
+- **React Community**: Ferramentas e bibliotecas
+
+---
+
+**Enjoy coding! 🚀**

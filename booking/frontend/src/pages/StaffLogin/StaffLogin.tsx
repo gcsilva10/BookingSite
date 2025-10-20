@@ -3,7 +3,6 @@ import './StaffLogin.css';
 import { API_BASE_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Buttons';
-import { GeometricShapes } from '../../components/GeometricShapes';
 import '../../components/Buttons/Button.css';
 
 export default function StaffLogin() {
@@ -44,8 +43,6 @@ export default function StaffLogin() {
   // Render
   return (
     <div className="page-staff-login">
-      <GeometricShapes />
-      
       <div className="login-card">
         <div className="login-logo">
           <h1>Couraça</h1>

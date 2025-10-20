@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiGet, apiPost, apiPut, apiDelete } from '../../lib/api';
 import { Button } from '../../components/Buttons';
-import { GeometricShapes } from '../../components/GeometricShapes';
 import '../../components/Buttons/Button.css';
 import './StaffTables.css';
 
@@ -126,8 +125,6 @@ export default function StaffTables() {
   // Render
   return (
     <div className="page-staff-tables">
-      <GeometricShapes />
-      
       <div className="staff-tables-container">
         <div className="page-header">
           <h1>Gestão de Mesas</h1>
