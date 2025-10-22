@@ -343,7 +343,7 @@ body:has(.page-home) {
 }
 
 .form-group .input-guests {
-  width: 10%;
+  width: 20%;
   min-height: 20px !important;
   height: 20px;
 }
@@ -468,7 +468,6 @@ body:has(.page-home) {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 1rem;
 }
 
 /* Messages */
